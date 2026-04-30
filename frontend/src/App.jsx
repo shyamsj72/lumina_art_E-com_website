@@ -160,7 +160,7 @@ function App() {
             <div className="footer-contact">
               <h3>Contact Us</h3>
               <p>WhatsApp: +91 8590 729 342</p>
-              <p>Email: orders@luminaart.com</p>
+              <p>Email: luminaart0@gmail.com</p>
             </div>
           </div>
           <div className="footer-bottom">
