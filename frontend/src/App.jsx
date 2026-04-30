@@ -29,19 +29,13 @@ function ProductCard({ product }) {
         <p>{product.description}</p>
         
         <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-          <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+          <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem', fontWeight: '500' }}>
             Select Size / Thickness:
           </label>
           <select 
             value={selectedVariantId} 
             onChange={(e) => setSelectedVariantId(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem', 
-              borderRadius: '6px', 
-              border: '1px solid var(--border-color)',
-              fontFamily: 'inherit'
-            }}
+            className="variant-select"
           >
             {product.variants.map(variant => (
               <option key={variant.id} value={variant.id}>
@@ -53,93 +47,11 @@ function ProductCard({ product }) {
       </div>
       <div className="product-footer">
         <button 
-            className="btn btn-small" 
+            className="btn btn-small whatsapp-btn" 
             onClick={handleWhatsAppOrder}
-            style={{ backgroundColor: '#25D366', borderColor: '#25D366', display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', justifyContent: 'center' }}
         >
           Enquire on WhatsApp
         </button>
-      </div>
-    </div>
-  );
-}
-
-function AuthModal({ onClose, onLoginSuccess }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState(null);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    const url = isLogin ? `${API_URL}/api/token/` : `${API_URL}/api/users/register/`;
-    const payload = isLogin ? { username, password } : { username, email, password };
-
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.detail || Object.values(data)[0] || 'Authentication failed');
-      }
-
-      if (isLogin) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
-        onLoginSuccess();
-      } else {
-        const loginRes = await fetch(`${API_URL}/api/token/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const loginData = await loginRes.json();
-        localStorage.setItem('access_token', loginData.access);
-        localStorage.setItem('refresh_token', loginData.refresh);
-        onLoginSuccess();
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  return (
-    <div className="cart-modal-overlay" onClick={onClose}>
-      <div className="auth-modal" onClick={e => e.stopPropagation()}>
-        <div className="tabs">
-          <div className={`tab ${isLogin ? 'active' : ''}`} onClick={() => setIsLogin(true)}>Login</div>
-          <div className={`tab ${!isLogin ? 'active' : ''}`} onClick={() => setIsLogin(false)}>Register</div>
-        </div>
-        
-        {error && <p style={{color: 'var(--google-red)', marginBottom: '1rem', fontSize: '0.9rem'}}>{error}</p>}
-        
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username</label>
-            <input type="text" value={username} onChange={e => setUsername(e.target.value)} required />
-          </div>
-          {!isLogin && (
-            <div className="form-group">
-              <label>Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-            </div>
-          )}
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-          </div>
-          <button type="submit" className="btn" style={{width: '100%', marginTop: '1rem'}}>
-            {isLogin ? 'Login' : 'Register'}
-          </button>
-        </form>
       </div>
     </div>
   );
@@ -149,9 +61,6 @@ function App() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('access_token'));
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -162,16 +71,10 @@ function App() {
         setLoading(false);
       })
       .catch(error => {
-        setError("Could not load products. Make sure the Django server is running.");
+        setError("Could not load products. Make sure the backend server is running.");
         setLoading(false);
       });
   }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    setIsAuthenticated(false);
-  };
 
   return (
     <>
@@ -182,24 +85,11 @@ function App() {
           </div>
           <ul className="nav-links">
             <li><a href="#home">Home</a></li>
-            <li><a href="#products">Shop</a></li>
-            <li>
-              {isAuthenticated ? (
-                <a href="#logout" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Logout</a>
-              ) : (
-                <a href="#login" onClick={(e) => { e.preventDefault(); setIsAuthOpen(true); }}>Login</a>
-              )}
-            </li>
+            <li><a href="#products">Our Catalog</a></li>
+            <li><a href="#contact">Contact</a></li>
           </ul>
         </div>
       </nav>
-
-      {isAuthOpen && (
-        <AuthModal 
-          onClose={() => setIsAuthOpen(false)} 
-          onLoginSuccess={() => { setIsAuthOpen(false); setIsAuthenticated(true); }} 
-        />
-      )}
 
       <section id="home" className="hero">
         <div className="container">
@@ -214,10 +104,32 @@ function App() {
         </div>
       </section>
 
+      <section className="features">
+        <div className="container">
+          <div className="feature-grid">
+            <div className="feature-card">
+              <div className="feature-icon">✨</div>
+              <h3>Premium Materials</h3>
+              <p>We use high-grade, weather-resistant acrylics ensuring your signage looks vibrant for years.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">🎯</div>
+              <h3>Precision CNC Cut</h3>
+              <p>State-of-the-art laser and CNC technology for perfect edges and flawless details.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">🤝</div>
+              <h3>B2B Wholesale</h3>
+              <p>Dedicated pricing and priority fulfillment for bulk orders and business partnerships.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="products" className="products">
         <div className="container">
-          <h2 className="section-title">Latest Creations</h2>
-          {loading && <p style={{textAlign: 'center'}}>Loading products...</p>}
+          <h2 className="section-title">Our Premium Catalog</h2>
+          {loading && <p style={{textAlign: 'center'}}>Loading catalog...</p>}
           {error && <p style={{textAlign: 'center', color: 'var(--google-red)'}}>{error}</p>}
           {!loading && !error && (
             <div className="product-grid">
@@ -228,6 +140,34 @@ function App() {
           )}
         </div>
       </section>
+
+      <footer id="contact" className="footer">
+        <div className="container">
+          <div className="footer-content">
+            <div className="footer-brand">
+              <div className="logo" style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+                <span>L</span><span>u</span><span>m</span><span>i</span><span>n</span><span>a</span>&nbsp;<span>A</span><span>r</span><span>t</span><span>.</span>
+              </div>
+              <p>Crafting premium signage solutions for modern homes and businesses.</p>
+            </div>
+            <div className="footer-links">
+              <h3>Quick Links</h3>
+              <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Catalog</a></li>
+              </ul>
+            </div>
+            <div className="footer-contact">
+              <h3>Contact Us</h3>
+              <p>WhatsApp: +91 8590 729 342</p>
+              <p>Email: orders@luminaart.com</p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; {new Date().getFullYear()} Lumina Art. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
