@@ -48,3 +48,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
         return user
+
+from .models import QuoteRequest
+
+class QuoteRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuoteRequest
+        fields = '__all__'

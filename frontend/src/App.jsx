@@ -12,7 +12,23 @@ function ProductCard({ product }) {
 
   const selectedVariant = product.variants.find(v => v.id === parseInt(selectedVariantId)) || product.variants[0];
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
+    // 1. Log the quote request to the backend
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      await fetch(`${API_URL}/api/quotes/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_name: product.name,
+          thickness: selectedVariant.thickness
+        })
+      });
+    } catch (error) {
+      console.error("Failed to log quote request:", error);
+    }
+
+    // 2. Redirect to WhatsApp
     const phoneNumber = '+918590729342';
     const message = `Hi Lumina Art! I'm interested in ordering:\n\n*Product*: ${product.name}\n*Size/Thickness*: ${selectedVariant.thickness}\n\nPlease let me know the details!`;
     const encodedMessage = encodeURIComponent(message);

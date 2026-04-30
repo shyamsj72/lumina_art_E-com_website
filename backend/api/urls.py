@@ -7,4 +7,6 @@ urlpatterns = [
     path('categories/', views.CategoryListAPIView.as_view(), name='category-list'),
     path('users/register/', views.RegisterView.as_view(), name='auth_register'),
     path('orders/', views.CheckoutView.as_view(), name='checkout'),
+    path('quotes/', views.QuoteRequestView.as_view(), name='quote-create'),
+    path('export-quotes/', views.ExportQuotesCSVView.as_view(), name='quote-export'),
 ]

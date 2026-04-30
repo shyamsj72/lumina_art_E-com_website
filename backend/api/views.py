@@ -70,3 +70,29 @@ class CheckoutView(APIView):
                 pass # Or handle error appropriately
 
         return Response({"message": "Order placed successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
+
+from .models import QuoteRequest
+from .serializers import QuoteRequestSerializer
+import csv
+from django.http import HttpResponse
+
+class QuoteRequestView(generics.CreateAPIView):
+    queryset = QuoteRequest.objects.all()
+    serializer_class = QuoteRequestSerializer
+    permission_classes = (AllowAny,)
+
+class ExportQuotesCSVView(APIView):
+    permission_classes = (AllowAny,) # Open for now, or could restrict to IsAuthenticated/Admin
+
+    def get(self, request):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="whatsapp_quotes.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Product Name', 'Thickness/Size', 'Time of Request'])
+
+        quotes = QuoteRequest.objects.all().order_by('-created_at')
+        for quote in quotes:
+            writer.writerow([quote.id, quote.product_name, quote.thickness, quote.created_at.strftime('%Y-%m-%d %H:%M:%S')])
+
+        return response

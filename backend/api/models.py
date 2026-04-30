@@ -57,3 +57,11 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+class QuoteRequest(models.Model):
+    product_name = models.CharField(max_length=200)
+    thickness = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product_name} ({self.thickness}) - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
