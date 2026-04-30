@@ -14,16 +14,16 @@ def seed():
     cat = Category.objects.create(name='Name Boards', slug='name-boards')
 
     products_data = [
-        {'name': 'Jungle Tusker Name Board', 'image_url': '/nameboard1.png'},
-        {'name': 'Dua Manzil Name Board', 'image_url': '/nameboard2.png'},
-        {'name': 'Heza Manzil Name Board', 'image_url': '/nameboard3.png'},
-        {'name': 'Baith Al Nihmath Name Board', 'image_url': '/nameboard4.png'},
-        {'name': 'Janaki Nivas Name Board', 'image_url': '/nameboard5.png'},
-        {'name': 'Thekkemadam Name Board', 'image_url': '/nameboard6.png'},
-        {'name': 'Snehanilayam Name Board', 'image_url': '/nameboard7.png'},
-        {'name': 'Gokulam Name Board', 'image_url': '/nameboard8.png'},
-        {'name': 'Aadishivam Name Board', 'image_url': '/nameboard9.png'},
-        {'name': 'Kalladayil Name Board', 'image_url': '/nameboard10.png'},
+        {'name': 'Premium Name Board - Style 1', 'image_url': '/nameboard1.png'},
+        {'name': 'Premium Name Board - Style 2', 'image_url': '/nameboard2.png'},
+        {'name': 'Premium Name Board - Style 3', 'image_url': '/nameboard3.png'},
+        {'name': 'Premium Name Board - Style 4', 'image_url': '/nameboard4.png'},
+        {'name': 'Premium Name Board - Style 5', 'image_url': '/nameboard5.png'},
+        {'name': 'Premium Name Board - Style 6', 'image_url': '/nameboard6.png'},
+        {'name': 'Premium Name Board - Style 7', 'image_url': '/nameboard7.png'},
+        {'name': 'Premium Name Board - Style 8', 'image_url': '/nameboard8.png'},
+        {'name': 'Premium Name Board - Style 9', 'image_url': '/nameboard9.png'},
+        {'name': 'Premium Name Board - Style 10', 'image_url': '/nameboard10.png'},
     ]
 
     for i, data in enumerate(products_data):

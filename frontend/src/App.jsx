@@ -14,7 +14,7 @@ function ProductCard({ product }) {
 
   const handleWhatsAppOrder = () => {
     const phoneNumber = '+918590729342';
-    const message = `Hi Lumina Art! I would like to order the following item:\n\n*Product*: ${product.name}\n*Thickness*: ${selectedVariant.thickness}\n*Price*: ₹${selectedVariant.price}\n\nPlease let me know the next steps for payment and delivery!`;
+    const message = `Hi Lumina Art! I'm interested in ordering:\n\n*Product*: ${product.name}\n*Size/Thickness*: ${selectedVariant.thickness}\n\nPlease let me know the details!`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     
@@ -30,7 +30,7 @@ function ProductCard({ product }) {
         
         <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <label style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
-            Select Thickness:
+            Select Size / Thickness:
           </label>
           <select 
             value={selectedVariantId} 
@@ -45,20 +45,19 @@ function ProductCard({ product }) {
           >
             {product.variants.map(variant => (
               <option key={variant.id} value={variant.id}>
-                {variant.thickness} - ₹{variant.price}
+                {variant.thickness}
               </option>
             ))}
           </select>
         </div>
       </div>
       <div className="product-footer">
-        <span className="price">₹{selectedVariant.price}</span>
         <button 
             className="btn btn-small" 
             onClick={handleWhatsAppOrder}
-            style={{ backgroundColor: '#25D366', borderColor: '#25D366', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            style={{ backgroundColor: '#25D366', borderColor: '#25D366', display: 'flex', alignItems: 'center', gap: '0.5rem', width: '100%', justifyContent: 'center' }}
         >
-          Order on WhatsApp
+          Enquire on WhatsApp
         </button>
       </div>
     </div>
@@ -205,12 +204,12 @@ function App() {
       <section id="home" className="hero">
         <div className="container">
           <div className="hero-content">
-            <h1>Precision Cut.<br/><span>Vibrant Colors.</span></h1>
-            <p>We craft premium CNC and laser-cut acrylic products. Elevate your space with our clear and colorful designs.</p>
-            <a href="#products" className="btn">Shop Collection</a>
+            <h1>Elevate Your Brand's<br/><span>First Impression.</span></h1>
+            <p>Premium custom-crafted Name Boards and Signages. Stand out with precision-cut, high-quality acrylic designs built to last.</p>
+            <a href="#products" className="btn">View Our Catalog</a>
           </div>
           <div className="hero-image">
-            <img src="/nameboard1.png" alt="Hero Product" />
+            <img src="/nameboard1.png" alt="Premium Name Board" />
           </div>
         </div>
       </section>
