@@ -14,94 +14,42 @@ def seed():
     cat = Category.objects.create(name='Name Boards', slug='name-boards')
 
     products_data = [
-        {
-            "name": "Mehra Family Name Board",
-            "slug": "mehra-family",
-            "description": "Elegant gold lettering on black acrylic background.",
-            "image": "/product1.png"
-        },
-        {
-            "name": "Music Theme Name Board",
-            "slug": "music-theme",
-            "description": "Wooden texture acrylic board with music notes.",
-            "image": "/product2.png"
-        },
-        {
-            "name": "Kavya Heritage Om Board",
-            "slug": "kavya-heritage",
-            "description": "Premium black board with gold Om design.",
-            "image": "/product3.png"
-        },
-        {
-            "name": "Dhanya Niwas Ganesha Board",
-            "slug": "dhanya-niwas",
-            "description": "Clean white acrylic with elegant black Ganesha art.",
-            "image": "/product4.png"
-        },
-        {
-            "name": "Flute & Peacock Name Board",
-            "slug": "flute-peacock",
-            "description": "Traditional wooden finish with flute and peacock feather design.",
-            "image": "/product5.png"
-        },
-        {
-            "name": "Malayalam Flute Name Board",
-            "slug": "malayalam-flute",
-            "description": "Wooden finish with traditional Malayalam script and a golden flute.",
-            "image": "/product6.png"
-        },
-        {
-            "name": "Lord Shiva Name Board",
-            "slug": "lord-shiva",
-            "description": "Beautiful Lord Shiva art with elegant regional script.",
-            "image": "/product7.png"
-        },
-        {
-            "name": "Kamatchi Illam Name Board",
-            "slug": "kamatchi-illam",
-            "description": "Classic wooden board with golden Tamil script and peacock feather.",
-            "image": "/product8.png"
-        },
-        {
-            "name": "Sijee Cottage Name Board",
-            "slug": "sijee-cottage",
-            "description": "Sleek black acrylic board with a bright pink lotus logo.",
-            "image": "/product9.png"
-        },
-        {
-            "name": "Traditional Malayalam Name Board",
-            "slug": "traditional-malayalam",
-            "description": "Wooden texture board featuring intricate golden typography and profile art.",
-            "image": "/product10.png"
-        }
+        {'name': 'Jungle Tusker Name Board', 'image_url': '/nameboard1.png'},
+        {'name': 'Dua Manzil Name Board', 'image_url': '/nameboard2.png'},
+        {'name': 'Heza Manzil Name Board', 'image_url': '/nameboard3.png'},
+        {'name': 'Baith Al Nihmath Name Board', 'image_url': '/nameboard4.png'},
+        {'name': 'Janaki Nivas Name Board', 'image_url': '/nameboard5.png'},
+        {'name': 'Thekkemadam Name Board', 'image_url': '/nameboard6.png'},
+        {'name': 'Snehanilayam Name Board', 'image_url': '/nameboard7.png'},
+        {'name': 'Gokulam Name Board', 'image_url': '/nameboard8.png'},
+        {'name': 'Aadishivam Name Board', 'image_url': '/nameboard9.png'},
+        {'name': 'Kalladayil Name Board', 'image_url': '/nameboard10.png'},
     ]
 
-    for p_data in products_data:
-        product = Product.objects.create(
+    for i, data in enumerate(products_data):
+        slug = data['name'].lower().replace(' ', '-')
+        p = Product.objects.create(
             category=cat,
-            name=p_data['name'],
-            slug=p_data['slug'],
-            description=p_data['description'],
-            image_url=f"http://localhost:5173{p_data['image']}"
+            name=data['name'],
+            slug=slug,
+            description="Premium custom CNC cut name board. High quality, weather-resistant, and beautifully designed to make your entrance stand out.",
+            image_url=data['image_url']
         )
         
-        # Add 2mm variant
+        # Create thickness variants
         ProductVariant.objects.create(
-            product=product,
+            product=p,
             thickness='2mm',
-            price=549.00,
-            stock=100
+            price=549.00
         )
         
-        # Add 4mm variant
         ProductVariant.objects.create(
-            product=product,
+            product=p,
             thickness='4mm',
-            price=850.00,
-            stock=100
+            price=850.00
         )
 
-    print("Database seeded successfully with all 10 products!")
+    print("Successfully seeded 10 Name Board products with 2mm and 4mm variants!")
 
 if __name__ == '__main__':
     seed()

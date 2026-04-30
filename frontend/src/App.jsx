@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 
-function ProductCard({ product, addToCart }) {
+function ProductCard({ product }) {
   const [selectedVariantId, setSelectedVariantId] = useState(
     product.variants && product.variants.length > 0 ? product.variants[0].id : null
   );
@@ -11,6 +11,15 @@ function ProductCard({ product, addToCart }) {
   }
 
   const selectedVariant = product.variants.find(v => v.id === parseInt(selectedVariantId)) || product.variants[0];
+
+  const handleWhatsAppOrder = () => {
+    const phoneNumber = '+918590729342';
+    const message = `Hi Lumina Art! I would like to order the following item:\n\n*Product*: ${product.name}\n*Thickness*: ${selectedVariant.thickness}\n*Price*: ₹${selectedVariant.price}\n\nPlease let me know the next steps for payment and delivery!`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+  };
 
   return (
     <div className="product-card">
@@ -44,7 +53,13 @@ function ProductCard({ product, addToCart }) {
       </div>
       <div className="product-footer">
         <span className="price">₹{selectedVariant.price}</span>
-        <button className="btn btn-small" onClick={() => addToCart(product, selectedVariant)}>Add to Cart</button>
+        <button 
+            className="btn btn-small" 
+            onClick={handleWhatsAppOrder}
+            style={{ backgroundColor: '#25D366', borderColor: '#25D366', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          Order on WhatsApp
+        </button>
       </div>
     </div>
   );
@@ -82,7 +97,6 @@ function AuthModal({ onClose, onLoginSuccess }) {
         localStorage.setItem('refresh_token', data.refresh);
         onLoginSuccess();
       } else {
-        // Auto login after register
         const loginRes = await fetch(`${API_URL}/api/token/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -137,8 +151,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('access_token'));
 
@@ -156,57 +168,11 @@ function App() {
       });
   }, []);
 
-  const addToCart = (product, variant) => {
-    setCart(prev => {
-      const cartItemId = `${product.id}-${variant.id}`;
-      const existing = prev.find(item => item.cartItemId === cartItemId);
-      if (existing) {
-        return prev.map(item => item.cartItemId === cartItemId ? { ...item, quantity: item.quantity + 1 } : item);
-      }
-      return [...prev, { cartItemId, productId: product.id, variantId: variant.id, name: product.name, thickness: variant.thickness, price: variant.price, image_url: product.image_url, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
-
-  const handleCheckout = async () => {
-    if (cart.length === 0) return;
-    
-    const items = cart.map(item => ({ variantId: item.variantId, quantity: item.quantity }));
-    const headers = { 'Content-Type': 'application/json' };
-    
-    if (isAuthenticated) {
-      headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
-    }
-
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-    try {
-      const res = await fetch(`${API_URL}/api/orders/`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ items, first_name: 'Guest', email: 'guest@example.com' }) // simplified for demo
-      });
-      
-      if (res.ok) {
-        alert("Order placed successfully!");
-        setCart([]);
-        setIsCartOpen(false);
-      } else {
-        alert("Failed to place order.");
-      }
-    } catch (err) {
-      alert("Error placing order.");
-    }
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setIsAuthenticated(false);
   };
-
-  const cartTotal = cart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
-  const cartItemsCount = cart.reduce((count, item) => count + item.quantity, 0);
 
   return (
     <>
@@ -218,7 +184,6 @@ function App() {
           <ul className="nav-links">
             <li><a href="#home">Home</a></li>
             <li><a href="#products">Shop</a></li>
-            <li><a href="#cart" onClick={(e) => { e.preventDefault(); setIsCartOpen(true); }}>Cart ({cartItemsCount})</a></li>
             <li>
               {isAuthenticated ? (
                 <a href="#logout" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Logout</a>
@@ -237,36 +202,6 @@ function App() {
         />
       )}
 
-      {isCartOpen && (
-        <div className="cart-modal-overlay" onClick={() => setIsCartOpen(false)}>
-          <div className="cart-modal" onClick={e => e.stopPropagation()}>
-            <div className="cart-header">
-              <h2>Your Cart</h2>
-              <button className="close-btn" onClick={() => setIsCartOpen(false)}>×</button>
-            </div>
-            <div className="cart-items">
-              {cart.length === 0 ? <p>Your cart is empty.</p> : cart.map(item => (
-                <div key={item.cartItemId} className="cart-item">
-                  <img src={item.image_url} alt={item.name} />
-                  <div className="cart-item-info">
-                    <h4>{item.name}</h4>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Thickness: {item.thickness}</p>
-                    <p>₹{item.price} x {item.quantity}</p>
-                  </div>
-                  <button className="remove-btn" onClick={() => setCart(c => c.filter(i => i.cartItemId !== item.cartItemId))}>Remove</button>
-                </div>
-              ))}
-            </div>
-            {cart.length > 0 && (
-              <div className="cart-footer">
-                <h3>Total: ₹{cartTotal.toFixed(2)}</h3>
-                <button className="btn" style={{width: '100%', marginTop: '1rem'}} onClick={handleCheckout}>Checkout</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       <section id="home" className="hero">
         <div className="container">
           <div className="hero-content">
@@ -275,7 +210,7 @@ function App() {
             <a href="#products" className="btn">Shop Collection</a>
           </div>
           <div className="hero-image">
-            <img src="/product1.png" alt="Hero Product" />
+            <img src="/nameboard1.png" alt="Hero Product" />
           </div>
         </div>
       </section>
@@ -288,7 +223,7 @@ function App() {
           {!loading && !error && (
             <div className="product-grid">
               {products.map(product => (
-                <ProductCard key={product.id} product={product} addToCart={addToCart} />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
