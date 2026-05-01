@@ -24,6 +24,10 @@ def seed():
         {'name': 'Premium Name Board - Style 8', 'image_url': '/nameboard8.png'},
         {'name': 'Premium Name Board - Style 9', 'image_url': '/nameboard9.png'},
         {'name': 'Premium Name Board - Style 10', 'image_url': '/nameboard10.png'},
+        {'name': 'Premium Name Board - Style 11', 'image_url': '/nameboard11.png'},
+        {'name': 'Premium Name Board - Style 12', 'image_url': '/nameboard12.png'},
+        {'name': 'Premium Name Board - Style 13', 'image_url': '/nameboard13.png'},
+        {'name': 'Premium Name Board - Style 14', 'image_url': '/nameboard14.png'},
     ]
 
     for i, data in enumerate(products_data):
@@ -49,7 +53,7 @@ def seed():
             price=850.00
         )
 
-    print("Successfully seeded 10 Name Board products with 2mm and 4mm variants!")
+    print("Successfully seeded 14 Name Board products with 2mm and 4mm variants!")
 
 if __name__ == '__main__':
     seed()

@@ -4,11 +4,11 @@ from .serializers import CategorySerializer, ProductSerializer
 
 class ProductListAPIView(generics.ListAPIView):
     # Just returning all products for now, we can filter in the frontend if variants are empty
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class = ProductSerializer
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category').prefetch_related('variants').all()
     serializer_class = ProductSerializer
     lookup_field = 'slug'
 
